@@ -1,8 +1,8 @@
-/*package com.ecommerce.CucumberBDD;
+package com.ecommerce.CucumberBDD;
 
-
-
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.openqa.selenium.Alert;
@@ -10,122 +10,86 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-
-
-public class LaptopSteps {
+public class LaptopSteps extends TestBase {
 	
-WebDriver driver;
+	LoginPage loginpage;
+	HomePage homepage;
+	LaptopPage laptoppage;
 	
-	@Given("^user is on login page$")
-	public void user_is_on_login_page() {
-		System.setProperty("webdriver.chrome.driver", "C:\\Users\\Prachiti karwande\\Downloads\\chromedriver_win32\\chromedriver.exe");
-		driver = new ChromeDriver();
-	    driver.get("https://www.demoblaze.com/index.html#");
-	    driver.manage().window().maximize();
+	@Given("^user opens browser$")
+	public void user_opens_browser() throws InterruptedException, IOException {
+		TestBase.setUp();
 	}
 
-	//Regulare exp - \"(.*)\" 
 	
-	@When("^user enters \"(.*)\" and \"(.*)\"$")
-	public void user_enters_username_and_password(String userName, String Password) throws InterruptedException, Throwable {
-		//List<List<String>> data = credentials.asLists();
-		WebElement login = driver.findElement(By.id("login2"));
-		  login.click();
-		  Thread.sleep(5000);
-		  WebElement username = driver.findElement(By.id("loginusername"));
-		  username.sendKeys(userName);
-		  WebElement password = driver.findElement(By.id("loginpassword"));
-		  password.sendKeys(Password);
-	}
-
-	@And("^clicks on login button$")
-	public void clicks_on_login_button() {
-		WebElement loginButton = driver.findElement(By.xpath("//*[@id=\"logInModal\"]/div/div/div[3]/button[2]"));
-		loginButton.click();
-	}
-
-	@And("^user is navigated to home page$")
-	public void user_is_navigated_to_the_home_page() {
-	  String title =  driver.getTitle();
-	   System.out.println(title);
-	   Assert.assertEquals("STORE", title);
+	@And("^user logs into application$")
+	public void user_logs_into_application() throws InterruptedException, Throwable {
+		loginpage = new LoginPage();
+	homepage = loginpage.doLogin(prop.getProperty("username"), prop.getProperty("password"));
 	}
 	
 	@And("user click on Laptop category")
 	public void user_click_on_laptop_category() throws InterruptedException {
-		Thread.sleep(2000);
-	   WebElement laptopCategory = driver.findElement(By.xpath("//a[@class='list-group-item' and text()='Laptops']"));
-	   laptopCategory.click();
+		homepage = new HomePage();
+		laptoppage = homepage.clickLaptopCategory();
 	}
 
 	@And("user click on MacBook Pro")
 	public void user_click_on_mac_book_pro() throws InterruptedException {
-		Thread.sleep(2000);
-		WebElement MacBookPro = driver.findElement(By.xpath("//a[@class='hrefch' and text()='MacBook Pro']"));
-		MacBookPro.click();
+		laptoppage = new LaptopPage();
+		laptoppage.clickMacBookPro();
 	}
 
 	@Then("user click on Add To Cart")
 	public void user_click_on_add_to_cart() throws InterruptedException {
-		Thread.sleep(2000);
-		WebElement AddtoCart = driver.findElement(By.xpath("//a[@class='btn btn-success btn-lg' and text()='Add to cart']"));
-		AddtoCart.click();
-		Thread.sleep(1000);
-		Alert alert = driver.switchTo().alert();
-		Thread.sleep(1000);
-		alert.accept();
+		laptoppage = new LaptopPage();
+		laptoppage.AddLaptopToCart();
 	}
 
 	@Then("user click on Cart")
 	public void user_click_on_cart() throws InterruptedException {
-		Thread.sleep(2000);
-		WebElement Cart = driver.findElement(By.id("cartur"));
-		Cart.click();
+		laptoppage = new LaptopPage();
+		laptoppage.clickOnCart();
 	}
 
 	@Then("user click on Place Order")
 	public void user_click_on_place_order() throws InterruptedException {
-		Thread.sleep(4000);
-		WebElement PlaceOrder = driver.findElement(By.xpath("//button[@class='btn btn-success' and text()='Place Order']"));
-		PlaceOrder.click();
+		laptoppage = new LaptopPage();
+		laptoppage.placeOrder();
 	}
 
 	@Then("user enters personal details")
-	public void user_enters_personal_details() throws InterruptedException {
-		Thread.sleep(2000);
-	   WebElement name = driver.findElement(By.id("name"));
-	   WebElement country = driver.findElement(By.id("country"));
-	   WebElement city = driver.findElement(By.id("city"));
-	   WebElement card = driver.findElement(By.id("card"));
-	   WebElement month = driver.findElement(By.id("month"));
-	   WebElement year = driver.findElement(By.id("year"));
-	   name.sendKeys("James Willson");
-	   country.sendKeys("India");
-	   city.sendKeys("Nagpur");
-	   card.sendKeys("2345676543");
-	   month.sendKeys("July");
-	   year.sendKeys("2020");
-	   WebElement purchase = driver.findElement(By.xpath("//button[@class='btn btn-primary' and text()='Purchase']"));
-	   purchase.click();
+	public void user_enters_personal_details(DataTable info) throws InterruptedException {
+		
+		WebElement name = driver.findElement(By.id("name"));
+		WebElement country = driver.findElement(By.id("country"));
+		WebElement city = driver.findElement(By.id("city"));
+		WebElement card = driver.findElement(By.id("card"));
+		WebElement month = driver.findElement(By.id("month"));
+		WebElement year = driver.findElement(By.id("year"));
+		WebElement purchase = driver.findElement(By.xpath("//button[@class='btn btn-primary' and text()='Purchase']"));
+		
+		List<Map<String,String>> data = info.asMaps(String.class,String.class);
+		name.sendKeys(data.get(0).get("name"));
+		country.sendKeys(data.get(0).get("country"));
+		city.sendKeys(data.get(0).get("city"));
+		card.sendKeys(data.get(0).get("card"));
+		month.sendKeys(data.get(0).get("month"));
+		year.sendKeys(data.get(0).get("year"));
+		purchase.click();
 	}
 
 	@Then("user clicks on OK")
 	public void user_clicks_on_ok() throws InterruptedException {
-		Thread.sleep(2000);
-		 WebElement ok = driver.findElement(By.xpath("//button[@class='confirm btn btn-lg btn-primary' and text()='OK']"));
-		 ok.click();
-		 driver.quit();
+		laptoppage = new LaptopPage();
+		laptoppage.clickOK();
+		TestBase.tearDown();
 	}
-
-
-
-
 }
-*/
+

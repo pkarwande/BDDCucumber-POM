@@ -1,4 +1,4 @@
-package com.ecommerce.CucumberBDD;
+/*package com.ecommerce.CucumberBDD;
 
 import java.io.IOException;
 
@@ -59,4 +59,4 @@ public class MessageToContactSteps extends TestBase {
 	}
 
 
-}
+}*/

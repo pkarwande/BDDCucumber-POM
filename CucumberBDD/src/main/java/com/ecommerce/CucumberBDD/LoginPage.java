@@ -30,8 +30,9 @@ public class LoginPage extends TestBase {
 	public HomePage doLogin(String uname, String pwd) throws IOException, InterruptedException
 	{
 		login.click();
+		Thread.sleep(10000);
 		username.sendKeys(uname);
-		//Thread.sleep(10000);
+		Thread.sleep(10000);
 		password.sendKeys(pwd);
 		loginButton.click();
 		
