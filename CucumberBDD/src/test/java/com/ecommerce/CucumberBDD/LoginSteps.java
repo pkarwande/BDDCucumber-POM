@@ -48,5 +48,5 @@ public class LoginSteps {
 	   System.out.println(title);
 	   Assert.assertEquals("STORE", title);
 	}
-}
-*/
+} */
+
